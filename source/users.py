@@ -6,8 +6,17 @@ from fastapi import Depends, status, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from passlib.context import CryptContext
-from source.database import get_db
+
+from database import get_db
 from sqlalchemy.orm import Session
+from models import User as UserInDB
+from schemas import UserBase, UserGet
+
+import logging
+
+
+logger = logging.getLogger("uvicorn.error")
+logger.setLevel(logging.DEBUG)
 
 SECRET_KEY = "c28f403e7ad697e1157782602adad8757be51d8d3f549bc4558a4fd5343fa34a"
 ALGORITHM = "HS256"
@@ -26,17 +35,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
-
-
-class User(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
-
-
-class UserInDB(User):
-    hashed_password: str
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -58,10 +56,10 @@ def get_user(username: str, db: Session = Depends(get_db)):
 
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
-    user = get_user(db, username)
+    user = get_user(username, db)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.password):
         return False
     return user
 
@@ -93,14 +91,14 @@ async def get_current_user(
         token_data = TokenData(username=username)
     except jwt.PyJWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
+    user = get_user(token_data.username, db)
     if user is None:
         raise credentials_exception
     return user
 
 
 async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: Annotated[UserInDB, Depends(get_current_user)],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -110,8 +108,9 @@ async def get_current_active_user(
 @router.post("/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Session = Depends(get_db),
 ) -> Token:
-    user = authenticate_user(form_data.username, form_data.password)
+    user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -125,20 +124,21 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/me", response_model=User)
+@router.get("/me", response_model=UserGet)
 async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-) -> User:
+    current_user: Annotated[UserInDB, Depends(get_current_active_user)],
+) -> UserBase:
     return current_user
 
 
-@router.post("/users/")
-async def create_user(user: User, db: Session = Depends(get_db)):
+@router.post("/signup")
+async def create_user(user: UserBase, db: Session = Depends(get_db)):
     db_user = UserInDB(
         username=user.username,
         email=user.email,
         full_name=user.full_name,
-        hashed_password=get_password_hash(user.hashed_password),
+        password=get_password_hash(user.password),
+        disabled=False,
     )
     db.add(db_user)
     db.commit()
