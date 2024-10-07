@@ -1,5 +1,6 @@
-from source.database import Base
-from sqlalchemy import Column, Integer, String, TIMESTAMP, text
+# from source.database import Base
+from database import Base
+from sqlalchemy import Column, Integer, String, TIMESTAMP, text, Boolean, ForeignKey
 
 
 class URL(Base):
@@ -9,6 +10,7 @@ class URL(Base):
     long_url = Column(String, index=True)
     short_url = Column(String, index=True)
     clicks = Column(Integer, default=0)
+    user = Column(Integer, ForeignKey("users.id"))
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
 
@@ -20,6 +22,7 @@ class User(Base):
     password = Column(String)
     full_name = Column(String)
     email = Column(String)
+    disabled = Column(Boolean, default=False)
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
     updated_at = Column(
         TIMESTAMP,

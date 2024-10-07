@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - DATABASE_URL=postgresql://postgres:LightY#2@db:5432/dockert
+      - DATABASE_URL=postgresql://postgres:LightY#2@db:5432/urlshort
     ports:
       - "8000:80"
 
@@ -14,12 +14,13 @@ services:
     image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    expose:
-      - 5433
+    ports:
+      # Connect to the database on localhost:5433, but internally it runs on 5432
+      - "5433:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: LightY#2
-      POSTGRES_DB: dockert
+      POSTGRES_DB: urlshort
 
 volumes:
   postgres_data:
