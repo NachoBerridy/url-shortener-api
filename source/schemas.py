@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class URLBase(BaseModel):
     long_url: str
+    name = str
 
     class Config:
         orm_mode = True
@@ -11,6 +12,7 @@ class URLBase(BaseModel):
 class URLCreate(URLBase):
     short_url: str
     clicks: int
+    name: str
 
     class Config:
         orm_mode = True

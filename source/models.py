@@ -11,6 +11,7 @@ class URL(Base):
     short_url = Column(String, index=True)
     clicks = Column(Integer, default=0)
     user = Column(Integer, ForeignKey("users.id"))
+    name = Column(String, nullable=True)
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
 
