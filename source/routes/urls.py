@@ -13,10 +13,10 @@ import services.database.schemas as schemas
 from services.database.database import get_db
 
 from sqlalchemy.orm import Session
-import base64
 
 # from source.users import get_current_user
 from utils.users import get_current_user
+from utils.urls import get_short_url, check_url_exists
 
 
 router = APIRouter(
@@ -25,10 +25,6 @@ router = APIRouter(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def get_short_url(long_url: str):
-    return base64.urlsafe_b64encode(long_url.encode()).decode()[:6]
 
 
 @router.get("/all", response_model=List[schemas.URLCreate])
@@ -68,6 +64,10 @@ async def create_url(
 
     clicks = 0
     short_url = get_short_url(url.long_url)
+
+    while check_url_exists(short_url, db):
+        short_url = get_short_url(url.long_url)
+
     new_url = URL(
         long_url=url.long_url,
         short_url=short_url,
@@ -79,3 +79,8 @@ async def create_url(
     db.commit()
     db.refresh(new_url)
     return new_url
+
+
+@router.get("/url_exists")
+async def url_exists(short_url: str, db: Session = Depends(get_db)):
+    return check_url_exists(short_url, db)
