@@ -24,6 +24,8 @@ from utils.users import (
     authenticate_user,
     create_access_token,
     get_current_active_user,
+    check_username_exists,
+    check_email_exists,
 )
 
 
@@ -82,6 +84,18 @@ async def read_users_me(
 
 @router.post("/signup")
 async def create_user(user: UserBase, db: Session = Depends(get_db)):
+    if check_username_exists(user.username, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists",
+        )
+
+    if check_email_exists(user.email, db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists",
+        )
+
     db_user = UserInDB(
         username=user.username,
         email=user.email,
@@ -93,3 +107,13 @@ async def create_user(user: UserBase, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+@router.get("/email_exists")
+async def email_exists(email: str, db: Session = Depends(get_db)):
+    return check_email_exists(email, db)
+
+
+@router.get("/username_exists")
+async def username_exists(username: str, db: Session = Depends(get_db)):
+    return check_username_exists(username, db)

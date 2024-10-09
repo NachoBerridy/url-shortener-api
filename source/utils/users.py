@@ -104,3 +104,17 @@ async def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def check_username_exists(username: str, db: Session) -> bool:
+    user = db.query(UserInDB).filter(UserInDB.username == username).first()
+    if user:
+        return True
+    return False
+
+
+def check_email_exists(email: str, db: Session) -> bool:
+    user = db.query(UserInDB).filter(UserInDB.email == email).first()
+    if user:
+        return True
+    return False
