@@ -2,14 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # from source import urls
-import urls
-import users
+import routes.urls as urls
+
+# from source import users
+import routes.users as users
 
 # import source.models as models
-import models
+import services.database.models as models
 
 # from source.database import engine, get_db
-from database import engine, get_db
+from services.database.database import engine, get_db
 
 
 app = FastAPI()
@@ -27,7 +29,7 @@ models.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "Hello World", "documentation": " "}
 
 
 @app.get("/{short_url}")

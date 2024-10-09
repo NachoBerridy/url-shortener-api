@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class URLBase(BaseModel):
     long_url: str
-    name = str
+    name: str
 
     class Config:
         orm_mode = True

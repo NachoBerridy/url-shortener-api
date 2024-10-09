@@ -2,17 +2,21 @@ from typing import List
 from fastapi import Depends, status, APIRouter, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-# from source import models
-from models import URL
+# from source.models import URL
+from services.database.models import URL
 
 # from source import schemas
-import schemas
+import services.database.schemas as schemas
 
 # from source.database import get_db
-from database import get_db
+
+from services.database.database import get_db
+
 from sqlalchemy.orm import Session
 import base64
-from users import get_current_user
+
+# from source.users import get_current_user
+from utils.users import get_current_user
 
 
 router = APIRouter(
@@ -65,7 +69,11 @@ async def create_url(
     clicks = 0
     short_url = get_short_url(url.long_url)
     new_url = URL(
-        long_url=url.long_url, short_url=short_url, clicks=clicks, user=user.id
+        long_url=url.long_url,
+        short_url=short_url,
+        clicks=clicks,
+        user=user.id,
+        name=url.name,
     )
     db.add(new_url)
     db.commit()
