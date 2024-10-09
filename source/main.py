@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 # from source import urls
 import routes.urls as urls
@@ -40,7 +41,7 @@ def redirect(short_url: str):
     if url:
         url.clicks += 1
         db.commit()
-        return {"url": url.long_url}
+        return RedirectResponse(url.long_url)  # Usar RedirectResponse para redirigir
     return {"error": "URL not found"}
 
 
