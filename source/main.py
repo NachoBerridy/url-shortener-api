@@ -12,7 +12,8 @@ import routes.users as users
 import services.database.models as models
 
 # from source.database import engine, get_db
-from services.database.database import engine, get_db
+from services.database.database import engine as url_engine, get_db as url_get_db
+from services.users_db.database import engine as user_engine
 
 
 app = FastAPI()
@@ -25,7 +26,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-models.Base.metadata.create_all(bind=engine)
+models.Base_url.metadata.create_all(bind=url_engine)
+models.Base_user.metadata.create_all(bind=user_engine)
 
 
 @app.get("/")
@@ -36,7 +38,7 @@ def read_root():
 @app.get("/{short_url}")
 def redirect(short_url: str):
     # get the long url from the database
-    db = next(get_db())
+    db = next(url_get_db())
     url = db.query(models.URL).filter(models.URL.short_url == short_url).first()
     if url:
         url.clicks += 1

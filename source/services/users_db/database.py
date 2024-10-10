@@ -8,11 +8,11 @@ load_dotenv()
 
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB_urlshort = os.getenv("POSTGRES_DB_urlshort")
-PORT = 5433
+POSTGRES_DB_users = os.getenv("POSTGRES_DB_users")
+PORT = 5434
 HOST = "localhost"
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{HOST}:{PORT}/{POSTGRES_DB_urlshort}"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{HOST}:{PORT}/{POSTGRES_DB_users}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
