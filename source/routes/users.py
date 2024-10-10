@@ -2,9 +2,7 @@ from fastapi import Depends, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from passlib.context import CryptContext
-
-from services.users_db.database import get_db
-
+from services.database.users_db.database import get_db
 from sqlalchemy.orm import Session
 from services.database.models import User as UserInDB
 from dotenv import load_dotenv

@@ -1,6 +1,6 @@
 # from source.database import Base
-from services.database.database import Base as Base_url
-from services.users_db.database import Base as Base_user
+from services.database.url_db.database import Base as Base_url
+from services.database.users_db.database import Base as Base_user
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, text
 
 

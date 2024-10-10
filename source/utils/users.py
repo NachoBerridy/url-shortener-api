@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 import logging
-from services.database.database import get_db
+from services.database.users_db.database import get_db
 from services.database.models import User as UserInDB
 
 load_dotenv()
