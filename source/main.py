@@ -4,8 +4,8 @@ from fastapi.responses import RedirectResponse
 import routes.urls as urls
 import routes.users as users
 import services.database.models as models
-from services.database.database import engine as url_engine, get_db as url_get_db
-from services.users_db.database import engine as user_engine
+from services.database.url_db.database import engine as url_engine, get_db as url_get_db
+from services.database.users_db.database import engine as user_engine
 
 
 app = FastAPI()
