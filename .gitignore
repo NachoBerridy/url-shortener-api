@@ -279,3 +279,9 @@ $RECYCLE.BIN/
 .env
 
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm,windows,visualstudiocode
+
+#Alembic
+alembic.ini
+alembic/
+migrations_url/
+migrations_users/
