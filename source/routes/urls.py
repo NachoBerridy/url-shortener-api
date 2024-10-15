@@ -1,22 +1,9 @@
 from typing import List
-from fastapi import Depends, status, APIRouter, HTTPException
+from fastapi import Depends, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer
-
-# from source.models import URL
-from services.database.models import URL
-
-# from source import schemas
-import services.database.schemas as schemas
-
-# from source.database import get_db
-
-from services.database.database import get_db
-
+from services.database.url_db.database import get_db
 from sqlalchemy.orm import Session
-
-# from source.users import get_current_user
-from utils.users import get_current_user
-from utils.urls import get_short_url, check_url_exists
+from utils.urls import get_all, get_my_urls, create_url, url_exists, URLBase, URLCreate
 
 
 router = APIRouter(
@@ -27,60 +14,27 @@ router = APIRouter(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@router.get("/all", response_model=List[schemas.URLCreate])
-def test_url(db: Session = Depends(get_db)):
-    urls = db.query(URL).all()
-    return urls
+@router.get("/all", response_model=List[URLCreate])
+async def get_all_urls(db: Session = Depends(get_db)):
+    return get_all(db)
 
 
-@router.get("/me", response_model=List[schemas.URLCreate])
-async def get_my_urls(
+@router.get("/me", response_model=List[URLCreate])
+async def get_user_urls(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    user = await get_current_user(token, db)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
-
-    urls = db.query(URL).filter(URL.user == user.id).all()
-    return urls
+    return await get_my_urls(token, db)
 
 
-@router.post(
-    "/create", status_code=status.HTTP_201_CREATED, response_model=schemas.URLCreate
-)
-async def create_url(
-    url: schemas.URLBase,
+@router.post("/create", status_code=status.HTTP_201_CREATED, response_model=URLCreate)
+async def create_url_endpoint(
+    url: URLBase,
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
 ):
-    user = await get_current_user(token, db)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
-
-    clicks = 0
-    short_url = get_short_url(url.long_url)
-
-    while check_url_exists(short_url, db):
-        short_url = get_short_url(url.long_url)
-
-    new_url = URL(
-        long_url=url.long_url,
-        short_url=short_url,
-        clicks=clicks,
-        user=user.id,
-        name=url.name,
-    )
-    db.add(new_url)
-    db.commit()
-    db.refresh(new_url)
-    return new_url
+    return await create_url(url, token, db)
 
 
 @router.get("/url_exists")
-async def url_exists(short_url: str, db: Session = Depends(get_db)):
-    return check_url_exists(short_url, db)
+async def url_exists_endpoint(short_url: str, db: Session = Depends(get_db)):
+    return url_exists(short_url, db)
