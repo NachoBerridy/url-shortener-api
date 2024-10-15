@@ -1,4 +1,4 @@
-# URL Shortener
+# URL Shortener API
 
 Acortador de URLs con gestión de usuarios y API RESTful. Desarrollado con FastAPI y PostgreSQL. Este repositorio corresponde al backend del proyecto. ([frontend](https://github.com/NachoBerridy/url-shortener-client))
 
@@ -36,3 +36,25 @@ graph TD;
   1. Base de datos de URLs: Almacena las URLs originales y sus versiones acortadas.
   2. Base de datos de Usuarios: Almacena la información de los usuarios registrados.
 - El servidor envía respuestas HTTP de vuelta al cliente.
+
+## Guía de instalación
+
+### Requisitos previos
+
+- Docker
+- Docker Compose
+- python3
+- pip3
+
+### Pasos
+
+1. Configurar las variables de entorno en un archivo `.env` en la raíz del proyecto. Puedes usar el archivo `.env.example` como referencia.
+
+2. Construir y levantar los contenedores de Docker:
+
+
+```bash
+docker-compose up --build
+```
+
+
