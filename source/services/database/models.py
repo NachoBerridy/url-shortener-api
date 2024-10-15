@@ -1,7 +1,7 @@
 # from source.database import Base
 from services.database.url_db.database import Base as Base_url
 from services.database.users_db.database import Base as Base_user
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, ForeignKey, text
+from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, text
 
 
 class URL(Base_url):
@@ -11,7 +11,7 @@ class URL(Base_url):
     long_url = Column(String, index=True)
     short_url = Column(String, index=True)
     clicks = Column(Integer, default=0)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, index=True)
     name = Column(String, nullable=True)
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 

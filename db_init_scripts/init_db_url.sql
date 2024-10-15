@@ -1,1 +1,1 @@
-CREATE DATABASE IF NOT EXISTS urlshort_db;
+CREATE DATABASE urlshort_db;

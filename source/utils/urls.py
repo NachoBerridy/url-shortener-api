@@ -1,4 +1,4 @@
-from source.services.database.models import URL
+from services.database.models import URL
 from sqlalchemy.orm import Session
 import base64
 from fastapi import Depends, status, APIRouter, HTTPException

@@ -20,7 +20,7 @@ services:
     image: postgres:15-alpine
     volumes:
       - postgres_data_url:/var/lib/postgresql/data
-      - ./db-init-scripts/init_db_url.sql:/docker-entrypoint-initdb.d/init_db_url.sql
+      - ./db_init_scripts/init_db_url.sql:/docker-entrypoint-initdb.d/init_db_url.sql
     ports:
       # Connect to the database on localhost:5433, but internally it runs on 5432
       - "5433:5432"
@@ -33,7 +33,7 @@ services:
     image: postgres:15-alpine
     volumes:
       - postgres_data_users:/var/lib/postgresql/data
-      - ./db-init-scripts/init_db_users.sql:/docker-entrypoint-initdb.d/init_db_users.sql
+      - ./db_init_scripts/init_db_users.sql:/docker-entrypoint-initdb.d/init_db_users.sql
     ports:
       # Connect to the database on localhost:5434, but internally it runs on 5432
       - "5434:5432"
@@ -43,4 +43,5 @@ services:
       POSTGRES_DB: ${POSTGRES_DB_users}
 
 volumes:
-  postgres_data:
+  postgres_data_url:
+  postgres_data_users:
