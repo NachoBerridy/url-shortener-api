@@ -7,7 +7,7 @@ Acortador de URLs con gestión de usuarios y API RESTful. Desarrollado con FastA
 ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/-Docker%20Compose-2496ED?logo=docker&logoColor=white)
-![Alembic](https://img.shields.io/badge/-Alembic-000000)
+![Alembic](https://img.shields.io/badge/-Alembic-ffffff?logo=alembic&logoColor=black)
 
 ## Características principales
 

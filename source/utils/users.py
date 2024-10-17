@@ -143,16 +143,16 @@ def check_email_exists(email: str, db: Session) -> bool:
     return db.query(UserInDB).filter(UserInDB.email == email).first() is not None
 
 
-async def create_user(user: UserBase, db: Session = Depends(get_db)):
+async def create_user(user: UserBase, db: Session):
     try:
         if check_username_exists(user.username, db):
-            raise HTTPException(
+            return HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The username already exists",
             )
 
         if check_email_exists(user.email, db):
-            raise HTTPException(
+            return HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The email already exists",
             )
@@ -169,13 +169,13 @@ async def create_user(user: UserBase, db: Session = Depends(get_db)):
         db.refresh(db_user)
         return db_user
     except Exception as e:
-        logger.error(f"Error trying to create user: {e}")
-        raise HTTPException(status_code=500, detail="Error al crear el usuario")
+        logger.error(f"Error creating user: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+    form_data: OAuth2PasswordRequestForm,
+    db: Session,
 ) -> Token:
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
