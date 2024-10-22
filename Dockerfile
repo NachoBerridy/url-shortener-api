@@ -8,11 +8,6 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-# Ver archivos en source
-#CMD ls -la source
-#RUN echo "-------------------"
-# ls -la dest
-#RUN echo "-------------------"
-#RUN ls -la
+EXPOSE 8000
 
-CMD ["uvicorn", "source.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "source.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]

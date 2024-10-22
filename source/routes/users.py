@@ -69,25 +69,27 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    return login_for_access_token(form_data)
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
+    return await login_for_access_token(form_data, db)
 
 
 @router.get("/me", response_model=UserGet)
 async def get_user(current_user: UserInDB = Depends(get_current_active_user)):
-    return read_users_me(current_user)
+    return await read_users_me(current_user)
 
 
 @router.post("/signup")
 async def signup(user: UserBase, db: Session = Depends(get_db)):
-    return create_user(user, db)
+    return await create_user(user, db)
 
 
 @router.get("/email_exists")
 async def email_exists(email: str, db: Session = Depends(get_db)):
-    return check_email_exists(email, db)
+    return await check_email_exists(email, db)
 
 
 @router.get("/username_exists")
 async def username_exists(username: str, db: Session = Depends(get_db)):
-    return check_username_exists(username, db)
+    return await check_username_exists(username, db)
