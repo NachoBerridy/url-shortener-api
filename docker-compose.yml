@@ -13,6 +13,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB_users=${POSTGRES_DB_users}
       - POSTGRES_DB_urlshort=${POSTGRES_DB_urlshort}
+      - PYTHONPATH=/app/source
+    expose:
+      - "8000"
     ports:
       - "8000:80"
     command: [ "uvicorn", "source.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000" ]
