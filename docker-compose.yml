@@ -15,6 +15,7 @@ services:
       - POSTGRES_DB_urlshort=${POSTGRES_DB_urlshort}
     ports:
       - "8000:80"
+    command: [ "uvicorn", "source.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000" ]
 
   db_url:
     image: postgres:15-alpine
@@ -22,7 +23,6 @@ services:
       - postgres_data_url:/var/lib/postgresql/data
       - ./db_init_scripts/init_db_url.sql:/docker-entrypoint-initdb.d/init_db_url.sql
     ports:
-      # Connect to the database on localhost:5433, but internally it runs on 5432
       - "5433:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -35,7 +35,6 @@ services:
       - postgres_data_users:/var/lib/postgresql/data
       - ./db_init_scripts/init_db_users.sql:/docker-entrypoint-initdb.d/init_db_users.sql
     ports:
-      # Connect to the database on localhost:5434, but internally it runs on 5432
       - "5434:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
